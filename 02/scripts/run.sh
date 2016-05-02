@@ -24,3 +24,10 @@ if [ "$IS_HTTPD_RUNNING" == 'true' ]; then
 else
   service httpd start
 fi
+
+IS_NGINX_RUNNING=$(is_running nginx)
+if [ "$IS_NGINX_RUNNING" == 'true' ]; then
+  service nginx restart
+else
+  service nginx start
+fi
