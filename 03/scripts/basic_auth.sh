@@ -22,11 +22,11 @@ HTPASSWD_FILE="/etc/httpd/passwd/.htpasswd"
 BASIC_AUTH_FILE="/etc/httpd/conf.d/basic_auth.conf"
 mkdir -p /etc/httpd/passwd/
 if [ "$BASIC_AUTH_USER" != "" ] && [ "$BASIC_AUTH_PASS" != "" ]; then
-  htpasswd -c -b $HTPASSWD_FILE $BASIC_AUTH_USER $BASIC_AUTH_PASS
-  cp /vagrant/conf.d/httpd/basic_auth.conf $BASIC_AUTH_FILE
+  htpasswd -c -b "$HTPASSWD_FILE" "$BASIC_AUTH_USER" "$BASIC_AUTH_PASS"
+  cp /vagrant/conf.d/httpd/basic_auth.conf "$BASIC_AUTH_FILE"
   echo "Enable BasicAuth!"
 else
-  : > $BASIC_AUTH_FILE
-  : > $HTPASSWD_FILE
+  : > "$BASIC_AUTH_FILE"
+  : > "$HTPASSWD_FILE"
   echo "Disable BasicAuth!"
 fi
