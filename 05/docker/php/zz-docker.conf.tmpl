@@ -1,0 +1,5 @@
+[global]
+daemonize = no
+
+[www]
+listen = [::]:{{ var "LISTEN_PORT" | default "9000" }}
