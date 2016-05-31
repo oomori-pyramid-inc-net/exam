@@ -10,13 +10,10 @@ RUN apt-get update && apt-get install -y wget \
   && chmod +x /bin/entrykit \
   && entrykit --symlink
 
-
 ENV HTTPDCONF_DIR /usr/local/apache2/conf
 RUN apt-get update && apt-get install patch
 COPY httpd.conf.patch /tmp/httpd.conf.patch
 RUN patch -ub -B /tmp -o $HTTPDCONF_DIR/httpd.conf.tmpl $HTTPDCONF_DIR/httpd.conf /tmp/httpd.conf.patch
-
-COPY assets /var/www/html/assets
 
 ENTRYPOINT [ \
   "switch", "shell=/bin/bash", "--", \

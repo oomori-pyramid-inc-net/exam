@@ -11,7 +11,6 @@ RUN apk add --no-cache --update openssl \
   && entrykit --symlink
 
 COPY zz-docker.conf.tmpl /usr/local/etc/php-fpm.d/zz-docker.conf.tmpl
-COPY index.php /var/www/html/index.php
 
 ENTRYPOINT [ \
   "switch", "shell=/bin/sh", "--", \
