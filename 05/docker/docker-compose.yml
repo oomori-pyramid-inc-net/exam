@@ -1,26 +1,67 @@
-nginx:
-  build: ./nginx
-  ports:
-    - 8080:80
-  links:
-    - httpd
-  environment:
-    - LISTEN_PORT=80
-    - BACKEND=httpd:80
-  
-httpd:
-  build: ./httpd
-  links:
-    - php
-  environment:
-    - LISTEN_PORT=80
-    - BACKEND=php:9000
-  volumes:
-    - /var/www/html:/var/www/html:ro
+version: '2'
 
-php:
-  build: ./php
-  environment:
-    - LISTEN_PORT=9000
-  volumes:
-    - /var/www/html:/var/www/html:ro
+services:
+  nginx:
+    build: ./nginx
+    ports:
+      - 8080:80
+    environment:
+      - LISTEN_PORT=80
+      - BACKEND=httpd:80
+      - FLUENTD_HEALTHCHECK_ENDPOINT=fluentd:24225
+    links:
+      - httpd
+      - fluentd
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: "localhost:24224"
+        tag: "docker.nginx.{{.FullID}}"
+    
+  httpd:
+    build: ./httpd
+    environment:
+      - LISTEN_PORT=80
+      - BACKEND=php:9000
+      - FLUENTD_HEALTHCHECK_ENDPOINT=fluentd:24225
+    links:
+      - php
+      - fluentd
+    volumes:
+      - /var/www/html:/var/www/html:ro
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: "localhost:24224"
+        tag: "docker.httpd.{{.FullID}}"
+
+  php:
+    build: ./php
+    environment:
+      - LISTEN_PORT=9000
+      - FLUENTD_HEALTHCHECK_ENDPOINT=fluentd:24225
+    volumes:
+      - /var/www/html:/var/www/html:ro
+    links:
+      - fluentd
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: "localhost:24224"
+        tag: "docker.php.{{.FullID}}"
+  
+  fluentd:
+    build: ./fluentd
+    ports:
+      - 24224:24224
+    environment:
+      - LISTEN_PORT=24224
+      - HEALTHCHECK_PORT=24225
+    volumes:
+      - /var/log/app:/fluentd/log
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: "localhost:24224"
+        tag: "docker.fluentd.{{.FullID}}"
+

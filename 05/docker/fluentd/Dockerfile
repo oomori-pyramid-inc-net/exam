@@ -1,5 +1,6 @@
-FROM php:5.6.21-fpm-alpine
+FROM fluent/fluentd:v0.12.24
 
+USER root
 ENV ENTRYKIT_VERSION 0.4.0
 WORKDIR /
 RUN apk add --no-cache --update openssl \
@@ -10,11 +11,12 @@ RUN apk add --no-cache --update openssl \
   && chmod +x /bin/entrykit \
   && entrykit --symlink
 
-COPY zz-docker.conf.tmpl /usr/local/etc/php-fpm.d/zz-docker.conf.tmpl
+USER fluent
+RUN gem install fluent-plugin-in_http_healthcheck
 
-COPY run.sh /run.sh
+RUN mv /fluentd/etc/$FLUENTD_CONF /fluentd/etc/$FLUENTD_CONF.tmpl
 ENTRYPOINT [ \
   "switch", "shell=/bin/sh", "--", \
-  "render", "/usr/local/etc/php-fpm.d/zz-docker.conf", "--", \
-  "sh", "/run.sh" \
+  "render", "/fluentd/etc/$FLUENTD_CONF", "--", \
+  "fluentd", "-c", "/fluentd/etc/$FLUENTD_CONF", "-p", "/fluentd/plugins $FLUENTD_OPT" \
 ]

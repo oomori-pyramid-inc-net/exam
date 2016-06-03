@@ -1,6 +1,6 @@
---- ./httpd.conf.org	2016-05-19 13:35:35.000000000 +0900
-+++ ./httpd.patched.conf	2016-05-19 17:45:56.000000000 +0900
-@@ -49,7 +49,7 @@
+--- ./httpd.conf.org	2016-06-03 12:20:36.000000000 +0900
++++ httpd.conf	2016-06-03 12:23:34.000000000 +0900
+@@ -49,7 +49,7 @@ ServerRoot "/usr/local/apache2"
  # prevent Apache from glomming onto all bound IP addresses.
  #
  #Listen 12.34.56.78:80
@@ -9,7 +9,7 @@
  
  #
  # Dynamic Shared Object (DSO) Support
-@@ -114,11 +114,11 @@
+@@ -114,11 +114,11 @@ LoadModule headers_module modules/mod_he
  LoadModule setenvif_module modules/mod_setenvif.so
  LoadModule version_module modules/mod_version.so
  #LoadModule remoteip_module modules/mod_remoteip.so
@@ -23,7 +23,16 @@
  #LoadModule proxy_scgi_module modules/mod_proxy_scgi.so
  #LoadModule proxy_wstunnel_module modules/mod_proxy_wstunnel.so
  #LoadModule proxy_ajp_module modules/mod_proxy_ajp.so
-@@ -214,8 +214,8 @@
+@@ -190,7 +190,7 @@ ServerAdmin you@example.com
+ #
+ # If your host doesn't have a registered DNS name, enter its IP address here.
+ #
+-#ServerName www.example.com:80
++ServerName localhost:{{ var "LISTEN_PORT" | default "80" }}
+ 
+ #
+ # Deny access to the entirety of your server's filesystem. You must
+@@ -214,8 +214,8 @@ ServerAdmin you@example.com
  # documents. By default, all requests are taken from this directory, but
  # symbolic links and aliases may be used to point to other locations.
  #
@@ -34,7 +43,7 @@
      #
      # Possible values for the Options directive are "None", "All",
      # or any combination of:
-@@ -248,7 +248,7 @@
+@@ -248,7 +248,7 @@ DocumentRoot "/usr/local/apache2/htdocs"
  # is requested.
  #
  <IfModule dir_module>
@@ -43,7 +52,7 @@
  </IfModule>
  
  #
-@@ -492,3 +492,7 @@
+@@ -492,3 +492,7 @@ SSLRandomSeed startup builtin
  SSLRandomSeed connect builtin
  </IfModule>
  

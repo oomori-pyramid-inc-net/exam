@@ -1,20 +1,19 @@
 #!/bin/bash
 set -eu
 
-yum -y update
-
-sudo tee /etc/yum.repos.d/docker.repo <<-'EOF'
-[dockerrepo]
-name=Docker Repository
-baseurl=https://yum.dockerproject.org/repo/main/centos/$releasever/
-enabled=1
-gpgcheck=1
-gpgkey=https://yum.dockerproject.org/gpg
+tee /etc/apt/sources.list.d/docker.list <<-'EOF'
+deb https://apt.dockerproject.org/repo ubuntu-trusty main
 EOF
 
-yum -y install docker-engine
-getent group docker >/dev/null || groupadd -r docker
-usermod -aG docker vagrant
+apt-get -y update
+apt-get -y install apt-transport-https ca-certificates
+apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
 
-curl -L https://github.com/docker/compose/releases/download/1.5.2/docker-compose-`uname -s`-`uname -m` > /usr/bin/docker-compose
+apt-get -y update
+apt-get -y install linux-image-extra-$(uname -r)
+apt-get -y install docker-engine
+usermod -aG docker vagrant
+mkdir -p -m 777 /var/log/app  # fluentdコンテナからログ書き込みを認めるため
+
+curl -L https://github.com/docker/compose/releases/download/1.7.1/docker-compose-`uname -s`-`uname -m` > /usr/bin/docker-compose
 chmod +x /usr/bin/docker-compose

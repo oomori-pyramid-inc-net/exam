@@ -15,8 +15,9 @@ RUN apt-get update && apt-get install patch
 COPY httpd.conf.patch /tmp/httpd.conf.patch
 RUN patch -ub -B /tmp -o $HTTPDCONF_DIR/httpd.conf.tmpl $HTTPDCONF_DIR/httpd.conf /tmp/httpd.conf.patch
 
+COPY run.sh /run.sh
 ENTRYPOINT [ \
   "switch", "shell=/bin/bash", "--", \
   "render", "$HTTPDCONF_DIR/httpd.conf", "--", \
-  "httpd-foreground" \
+  "sh", "/run.sh" \
 ]

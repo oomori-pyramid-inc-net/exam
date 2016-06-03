@@ -12,8 +12,9 @@ RUN apk add --no-cache --update openssl \
 
 COPY default.conf.tmpl /etc/nginx/conf.d/default.conf.tmpl
 
+COPY run.sh /run.sh
 ENTRYPOINT [ \
   "switch", "shell=/bin/sh", "--", \
   "render", "/etc/nginx/conf.d/default.conf", "--", \
-  "nginx", "-g", "daemon off;" \
+  "sh", "/run.sh" \
 ]
