@@ -1,0 +1,8 @@
+[global]
+daemonize = no
+
+[www]
+listen = [::]:{{ var "LISTEN_PORT" | default "9000" }}
+
+php_admin_value[display_errors] = Off
+php_admin_flag[log_errors] = on

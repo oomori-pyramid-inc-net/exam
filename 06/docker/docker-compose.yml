@@ -1,0 +1,23 @@
+version: '2'
+
+services:
+  nginx:
+    build: ./nginx
+    ports:
+      - 80:80
+    environment:
+      - LISTEN_PORT=80
+      - BACKEND=wordpress:9000
+    links:
+      - wordpress 
+    volumes:
+      - /wordpress:/var/www/html:ro
+    
+  wordpress:
+    build: ./wordpress
+    environment:
+      - LISTEN_PORT=9000
+      - DB_HOST=localhost:/var/run/mysqld/mysqld.sock
+    volumes:
+      - /wordpress:/var/www/html:rw
+      - /var/run/mysqld:/var/run/mysqld:rw
