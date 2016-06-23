@@ -1,0 +1,44 @@
+version: '2'
+
+services:
+  fluentd:
+    build: ./fluentd
+    depends_on:
+      - elasticsearch
+    ports:
+      - 24224:24224
+    environment:
+      - LISTEN_PORT=24224
+    volumes:
+      - /var/log/app:/fluentd/log:rw
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: "192.168.5.110:24224"
+        tag: "docker.fluentd.{{.ID}}"
+        fluentd-async-connect: "true"
+
+  elasticsearch:
+    image: elasticsearch:2.3.3
+    volumes:
+      - /var/esdata:/usr/share/elasticsearch/data:rw
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: "192.168.5.110:24224"
+        tag: "docker.elasticsearch.{{.ID}}"
+        fluentd-async-connect: "true"
+
+  kibana:
+    image: kibana:4.5.1
+    depends_on:
+      - elasticsearch
+    ports:
+      - 5601:5601
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: "192.168.5.110:24224"
+        tag: "docker.kibana.{{.ID}}"
+        fluentd-async-connect: "true"
+

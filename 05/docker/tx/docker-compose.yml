@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+  log-generator:
+    build: ./log-generator
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: "192.168.5.110:24224"
+        tag: "docker.log-generator.{{.ID}}"
+        fluentd-async-connect: "true"
+    
