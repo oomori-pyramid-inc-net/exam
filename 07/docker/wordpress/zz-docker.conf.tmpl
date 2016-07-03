@@ -1,0 +1,13 @@
+[global]
+daemonize = no
+
+[www]
+listen = [::]:{{ var "LISTEN_PORT" | default "9000" }}
+
+ping.path = /ping 
+
+; Ensure worker stdout and stderr are sent to the main error log.
+catch_workers_output = yes
+
+php_admin_value[display_errors] = Off
+php_admin_flag[log_errors] = on
